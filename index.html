@@ -37,7 +37,7 @@
             id="main-video"
             src="https://github.com/fabriziosalmi/transversal/raw/refs/heads/main/28-06-2025_renoize_transversalpuntozero.mp4"
             autoplay
-            muted="false"
+            muted="false" <!-- Consider setting to true for better autoplay compatibility, then unmuting via user interaction -->
             loop="false"
             playsinline
             class="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
@@ -57,20 +57,24 @@
     <div id="main-content" class="w-full flex-col items-center justify-center hidden">
         <nav class="navbar-bg shadow-xl py-4 px-6 md:px-12 w-full">
             <div class="container mx-auto flex justify-between items-center">
-                <a href="#" class="text-2xl font-bold text-red-400 rounded-md p-2 hover:bg-gray-800 transition-colors">
+                <a href="#" class="text-2xl font-bold text-red-400 rounded-md p-2 hover:bg-gray-800 transition-colors flex-shrink-0">
                     Transversal Punto Zero
                 </a>
-                <div class="flex space-x-8">
+                <!-- Desktop Menu: Hidden on small screens, visible on medium and up -->
+                <div class="hidden md:flex md:space-x-6 lg:space-x-8">
                     <a href="chisiamo.html" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Chi Siamo</a>
                     <a href="traversoni.html" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Traversoni</a>
                     <a href="podcasts.html" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Podcasts</a>
                     <a href="links.html" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Links</a>
                     <a href="mailto:transversalpuntozero@gmail.com" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Contattaci</a>
                 </div>
+                <!-- Mobile Menu Button: Visible on small screens, hidden on medium and up -->
                 <button
+                    id="mobile-menu-button"
                     class="md:hidden text-gray-400 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-2 transition-colors"
                     aria-label="Toggle navigation"
-                    style="display: none;"
+                    aria-expanded="false" 
+                    aria-controls="mobile-menu"
                 >
                     <svg
                         class="w-6 h-6"
@@ -87,6 +91,16 @@
                         ></path>
                     </svg>
                 </button>
+            </div>
+            <!-- Mobile Menu: Hidden by default, toggled by JS. Also hidden on medium and up via md:hidden. -->
+            <div id="mobile-menu" class="hidden md:hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="chisiamo.html" class="block text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md py-2 px-3 hover:bg-gray-800 w-full text-left">Chi Siamo</a>
+                    <a href="traversoni.html" class="block text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md py-2 px-3 hover:bg-gray-800 w-full text-left">Traversoni</a>
+                    <a href="podcasts.html" class="block text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md py-2 px-3 hover:bg-gray-800 w-full text-left">Podcasts</a>
+                    <a href="links.html" class="block text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md py-2 px-3 hover:bg-gray-800 w-full text-left">Links</a>
+                    <a href="mailto:transversalpuntozero@gmail.com" class="block text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md py-2 px-3 hover:bg-gray-800 w-full text-left">Contattaci</a>
+                </div>
             </div>
         </nav>
 
@@ -115,6 +129,7 @@
 
         <footer class="bg-gray-950 text-white py-10 w-full">
             <div class="container mx-auto px-6 md:px-12 text-center">
+                <p>© 2024 Transversal Punto Zero. All rights reserved.</p>
             </div>
         </footer>
     </div>
@@ -130,27 +145,53 @@
 
             // Function to show main content and hide video
             const showMainContent = () => {
-                videoPlayerSection.classList.add('hidden');
-                mainContent.classList.remove('hidden');
-                mainContent.classList.add('flex'); // Ensure flex display for content
-                mainContent.classList.add('animate-fadeIn'); // Apply fade-in animation
-                // Ensure logo is shown and initial text is hidden
-                heroLogoContainer.classList.remove('hidden');
-                initialHeroText.classList.add('hidden');
+                if (videoPlayerSection) {
+                    videoPlayerSection.classList.add('hidden');
+                }
+                if (mainContent) {
+                    mainContent.classList.remove('hidden');
+                    mainContent.classList.add('flex'); // Ensure flex display for content
+                    mainContent.classList.add('animate-fadeIn'); // Apply fade-in animation
+                }
+                if (heroLogoContainer) {
+                    heroLogoContainer.classList.remove('hidden');
+                }
+                if (initialHeroText) {
+                    initialHeroText.classList.add('hidden');
+                }
             };
 
             // Event listener for video ending
-            mainVideo.onended = showMainContent;
+            if (mainVideo) {
+                mainVideo.onended = showMainContent;
+
+                // Attempt to play video on load, with fallback for autoplay policies
+                mainVideo.play().catch(error => {
+                    console.error("Video autoplay failed:", error);
+                    // If autoplay fails, show content immediately
+                    showMainContent();
+                });
+            } else {
+                 // If there's no video element, show main content immediately
+                showMainContent();
+            }
+
 
             // Event listener for skip button
-            skipVideoButton.onclick = showMainContent;
+            if (skipVideoButton) {
+                skipVideoButton.onclick = showMainContent;
+            }
 
-            // Attempt to play video on load, with fallback for autoplay policies
-            mainVideo.play().catch(error => {
-                console.error("Video autoplay failed:", error);
-                // If autoplay fails, show content immediately
-                showMainContent();
-            });
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    const isMenuHidden = mobileMenu.classList.toggle('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', !isMenuHidden); 
+                });
+            }
         });
     </script>
 </body>
