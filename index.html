@@ -1,250 +1,179 @@
-import React, { useState, useEffect, useRef } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transversal Punto Zero</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: #000000; /* Black background */
+            color: #e5e7eb; /* Light gray text */
+        }
+        /* Custom styles for the navbar background to match React app */
+        .navbar-bg {
+            background-color: #333333;
+        }
+        /* Custom styles for feature cards background to match React app */
+        .card-bg {
+            background-color: #1f2937; /* Equivalent to gray-800 */
+        }
+        /* Animation for content fade-in */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center">
 
-// IMPORTANT: For the 'Space Mono' font to work, please add the following line
-// to the <head> section of your public/index.html file:
-// <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-
-// Main App component
-const App = () => {
-  // State to manage video visibility
-  const [showVideo, setShowVideo] = useState(true);
-  // State to manage main content visibility
-  const [showContent, setShowContent] = useState(false);
-  // State to manage logo visibility in Hero section
-  const [showLogo, setShowLogo] = useState(false);
-
-  // Function to handle video ending or skipping
-  const handleVideoEnd = () => {
-    setShowVideo(false); // Hide the video
-    setShowContent(true); // Show the main content
-    setShowLogo(true); // Show the logo in the Hero section
-  };
-
-  return (
-    // Applied 'Space Mono' font to the entire application
-    <div className="min-h-screen bg-black antialiased text-gray-100 flex flex-col items-center justify-center" style={{ fontFamily: "'Space Mono', monospace" }}>
-      {/* Conditionally render the Video Player */}
-      {showVideo && (
-        <VideoPlayer
-          src="https://github.com/fabriziosalmi/transversal/raw/refs/heads/main/28-06-2025_renoize_transversalpuntozero.mp4"
-          onVideoEnd={handleVideoEnd}
-        />
-      )}
-
-      {/* Conditionally render the main website content */}
-      {showContent && (
-        <div className="w-full flex flex-col items-center justify-center animate-fadeIn">
-          {/* Navbar Component */}
-          <Navbar />
-
-          {/* Hero Section Component */}
-          <Hero showLogo={showLogo} />
-
-          {/* Main Content Section Component */}
-          <ContentSection />
-
-          {/* Footer Component */}
-          <Footer />
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Video Player Component
-const VideoPlayer = ({ src, onVideoEnd }) => {
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      // Attempt to play the video. Browsers might still block autoplay with sound.
-      // playsInline is crucial for iOS to play video within the page.
-      videoRef.current.play().catch(error => {
-        console.error("Video autoplay failed:", error);
-        // Fallback: If autoplay fails, hide video and show content immediately
-        onVideoEnd();
-      });
-    }
-  }, []);
-
-  return (
-    <div className="flex flex-col items-center justify-center w-full h-screen bg-black p-4"> {/* Added padding */}
-      <video
-        ref={videoRef}
-        src={src}
-        onEnded={onVideoEnd}
-        autoPlay
-        muted={false} // Attempt to play with sound
-        loop={false}
-        playsInline // Important for mobile browsers (especially iOS)
-        className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-        style={{ width: 'auto', height: 'auto', maxWidth: '90vw', maxHeight: '90vh' }}
-      >
-        Your browser does not support the video tag.
-      </video>
-      {/* Skip Video Link */}
-      <button
-        onClick={onVideoEnd}
-        className="mt-4 text-gray-400 hover:text-red-400 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-1"
-      >
-        Skip Video
-      </button>
-    </div>
-  );
-};
-
-// Navbar Component
-const Navbar = () => {
-  return (
-    <nav className="shadow-xl py-4 px-6 md:px-12 w-full" style={{ backgroundColor: '#333333' }}>
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo or Site Title */}
-        <a href="#" className="text-2xl font-bold text-red-400 rounded-md p-2 hover:bg-gray-800 transition-colors">
-          Transversal Punto Zero
-        </a>
-
-        {/* Navigation Links */}
-        <div className="flex space-x-8">
-          <NavLink text="Chi Siamo" href="chisiamo.html" />
-          <NavLink text="Podcasts" href="podcasts.html" />
-          <NavLink text="Links" href="links.html" />
-          {/* New "Contattaci" link */}
-          <NavLink text="Contattaci" href="mailto:transversalpuntozero@gmail.com" />
-        </div>
-
-        {/* Mobile menu button (hidden for this simplified version, but kept for future expansion) */}
-        <button
-          className="md:hidden text-gray-400 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-2 transition-colors"
-          aria-label="Toggle navigation"
-          style={{ display: 'none' }} // Hidden for now as mobile menu logic is not implemented
+    <div id="video-player-section" class="flex flex-col items-center justify-center w-full h-screen bg-black p-4">
+        <video
+            id="main-video"
+            src="https://github.com/fabriziosalmi/transversal/raw/refs/heads/main/28-06-2025_renoize_transversalpuntozero.mp4"
+            autoplay
+            muted="false"
+            loop="false"
+            playsinline
+            class="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            style="width: auto; height: auto; max-width: 90vw; max-height: 90vh;"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
-          </svg>
+            Your browser does not support the video tag.
+        </video>
+        <button
+            id="skip-video-button"
+            class="mt-4 text-gray-400 hover:text-red-400 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-1"
+        >
+            Skip Video
         </button>
-      </div>
-    </nav>
-  );
-};
+    </div>
 
-// Reusable Navigation Link component
-const NavLink = ({ href, text }) => (
-  <a
-    href={href}
-    className="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800"
-  >
-    {text}
-  </a>
-);
+    <div id="main-content" class="w-full flex-col items-center justify-center hidden">
+        <nav class="navbar-bg shadow-xl py-4 px-6 md:px-12 w-full">
+            <div class="container mx-auto flex justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-red-400 rounded-md p-2 hover:bg-gray-800 transition-colors">
+                    Transversal Punto Zero
+                </a>
+                <div class="flex space-x-8">
+                    <a href="chisiamo.html" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Chi Siamo</a>
+                    <a href="podcasts.html" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Podcasts</a>
+                    <a href="links.html" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Links</a>
+                    <a href="mailto:transversalpuntozero@gmail.com" class="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800">Contattaci</a>
+                </div>
+                <button
+                    class="md:hidden text-gray-400 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-2 transition-colors"
+                    aria-label="Toggle navigation"
+                    style="display: none;"
+                >
+                    <svg
+                        class="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"
+                        ></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
 
-// Hero Section Component
-const Hero = ({ showLogo }) => {
-  return (
-    <section className="bg-black text-white py-20 md:py-28 lg:py-36 shadow-lg w-full">
-      <div className="container mx-auto px-6 md:px-12 text-center">
-        {showLogo ? (
-          <div className="flex flex-col items-center justify-center">
-            {/* Actual Logo Image */}
-            <img
-              src="https://github.com/fabriziosalmi/transversal/blob/main/transversalpuntozero_logo.png?raw=true"
-              alt="Transversal Punto Zero Logo"
-              className="max-w-xs md:max-w-sm lg:max-w-md h-auto mb-4"
-            />
-          </div>
-        ) : (
-          <>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 drop-shadow-md">
-              Innovating for a Brighter Future
-            </h1>
-            <p className="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto opacity-90">
-              Transversal Punto Zero is dedicated to pioneering solutions that drive progress and create lasting impact.
-            </p>
-            <button className="bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-red-700 hover:scale-105 transition-all duration-300 ease-in-out transform">
-              Learn More About Us
-            </button>
-          </>
-        )}
-      </div>
-    </section>
-  );
-};
+        <section class="bg-black text-white py-20 md:py-28 lg:py-36 shadow-lg w-full">
+            <div class="container mx-auto px-6 md:px-12 text-center">
+                <div id="hero-logo-container" class="flex flex-col items-center justify-center">
+                    <img
+                        src="https://github.com/fabriziosalmi/transversal/blob/main/transversalpuntozero_logo.png?raw=true"
+                        alt="Transversal Punto Zero Logo"
+                        class="max-w-xs md:max-w-sm lg:max-w-md h-auto mb-4"
+                    />
+                </div>
+                <div id="initial-hero-text" class="hidden">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 drop-shadow-md">
+                        Innovating for a Brighter Future
+                    </h1>
+                    <p class="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto opacity-90">
+                        Transversal Punto Zero is dedicated to pioneering solutions that drive progress and create lasting impact.
+                    </p>
+                    <button class="bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-red-700 hover:scale-105 transition-all duration-300 ease-in-out transform">
+                        Learn More About Us
+                    </button>
+                </div>
+            </div>
+        </section>
 
-// Main Content Section Component
-const ContentSection = () => {
-  return (
-    <section className="py-16 md:py-24 bg-black w-full">
-      <div className="container mx-auto px-6 md:px-12">
-        {/* Removed the <h2> tag for "Explore" */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {/* Feature Card 1: Chi Siamo */}
-          <FeatureCard
-            icon="👥" // People icon
-            title="CHI SIAMO"
-            description="Scopri la nostra missione, visione e il team appassionato dietro Transversal Punto Zero."
-            href="chisiamo.html"
-          />
+        <section class="py-16 md:py-24 bg-black w-full">
+            <div class="container mx-auto px-6 md:px-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <a href="chisiamo.html" class="block bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-gray-100">
+                        <div class="text-5xl mb-6 text-center">👥</div>
+                        <h3 class="text-xl font-semibold text-gray-100 mb-4 text-center">CHI SIAMO</h3>
+                        <p class="text-gray-300 leading-relaxed text-center">Scopri la nostra missione, visione e il team appassionato dietro Transversal Punto Zero.</p>
+                    </a>
 
-          {/* Feature Card 2: Podcasts */}
-          <FeatureCard
-            icon="🎙️" // Microphone/podcast icon
-            title="PODCASTS"
-            description="Sintonizzati sulle nostre ultime discussioni, interviste e approfondimenti su vari argomenti."
-            href="podcasts.html"
-          />
+                    <a href="podcasts.html" class="block bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-gray-100">
+                        <div class="text-5xl mb-6 text-center">🎙️</div>
+                        <h3 class="text-xl font-semibold text-gray-100 mb-4 text-center">PODCASTS</h3>
+                        <p class="text-gray-300 leading-relaxed text-center">Sintonizzati sulle nostre ultime discussioni, interviste e approfondimenti su vari argomenti.</p>
+                    </a>
 
-          {/* Feature Card 3: Links */}
-          <FeatureCard
-            icon="🔗" // Link icon
-            title="LINK"
-            description="Trova risorse utili, partner e altri collegamenti pertinenti."
-            href="links.html"
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
+                    <a href="links.html" class="block bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-gray-100">
+                        <div class="text-5xl mb-6 text-center">🔗</div>
+                        <h3 class="text-xl font-semibold text-gray-100 mb-4 text-center">LINK</h3>
+                        <p class="text-gray-300 leading-relaxed text-center">Trova risorse utili, partner e altri collegamenti pertinenti.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
 
-// Reusable Feature Card component
-const FeatureCard = ({ icon, title, description, href }) => (
-  <a href={href} className="block bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-gray-100">
-    <div className="text-5xl mb-6 text-center">{icon}</div>
-    <h3 className="text-xl font-semibold text-gray-100 mb-4 text-center">{title}</h3>
-    <p className="text-gray-300 leading-relaxed text-center">{description}</p>
-  </a>
-);
+        <footer class="bg-gray-950 text-white py-10 w-full">
+            <div class="container mx-auto px-6 md:px-12 text-center">
+            </div>
+        </footer>
+    </div>
 
-// Footer Component
-const Footer = () => {
-  return (
-    <footer className="bg-gray-950 text-white py-10 w-full">
-      <div className="container mx-auto px-6 md:px-12 text-center">
-        {/* Removed footer links and copyright text */}
-      </div>
-    </footer>
-  );
-};
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoPlayerSection = document.getElementById('video-player-section');
+            const mainVideo = document.getElementById('main-video');
+            const skipVideoButton = document.getElementById('skip-video-button');
+            const mainContent = document.getElementById('main-content');
+            const heroLogoContainer = document.getElementById('hero-logo-container');
+            const initialHeroText = document.getElementById('initial-hero-text');
 
-// Reusable Footer Link component (no longer used but kept for completeness if needed elsewhere)
-const FooterLink = ({ href, text }) => (
-  <a
-    href={href}
-    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm rounded-md p-1"
-  >
-    {text}
-  </a>
-);
+            // Function to show main content and hide video
+            const showMainContent = () => {
+                videoPlayerSection.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                mainContent.classList.add('flex'); // Ensure flex display for content
+                mainContent.classList.add('animate-fadeIn'); // Apply fade-in animation
+                // Ensure logo is shown and initial text is hidden
+                heroLogoContainer.classList.remove('hidden');
+                initialHeroText.classList.add('hidden');
+            };
 
-export default App;
+            // Event listener for video ending
+            mainVideo.onended = showMainContent;
+
+            // Event listener for skip button
+            skipVideoButton.onclick = showMainContent;
+
+            // Attempt to play video on load, with fallback for autoplay policies
+            mainVideo.play().catch(error => {
+                console.error("Video autoplay failed:", error);
+                // If autoplay fails, show content immediately
+                showMainContent();
+            });
+        });
+    </script>
+</body>
+</html>
