@@ -1,0 +1,250 @@
+import React, { useState, useEffect, useRef } from 'react';
+
+// IMPORTANT: For the 'Space Mono' font to work, please add the following line
+// to the <head> section of your public/index.html file:
+// <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+
+// Main App component
+const App = () => {
+  // State to manage video visibility
+  const [showVideo, setShowVideo] = useState(true);
+  // State to manage main content visibility
+  const [showContent, setShowContent] = useState(false);
+  // State to manage logo visibility in Hero section
+  const [showLogo, setShowLogo] = useState(false);
+
+  // Function to handle video ending or skipping
+  const handleVideoEnd = () => {
+    setShowVideo(false); // Hide the video
+    setShowContent(true); // Show the main content
+    setShowLogo(true); // Show the logo in the Hero section
+  };
+
+  return (
+    // Applied 'Space Mono' font to the entire application
+    <div className="min-h-screen bg-black antialiased text-gray-100 flex flex-col items-center justify-center" style={{ fontFamily: "'Space Mono', monospace" }}>
+      {/* Conditionally render the Video Player */}
+      {showVideo && (
+        <VideoPlayer
+          src="https://github.com/fabriziosalmi/transversal/raw/refs/heads/main/28-06-2025_renoize_transversalpuntozero.mp4"
+          onVideoEnd={handleVideoEnd}
+        />
+      )}
+
+      {/* Conditionally render the main website content */}
+      {showContent && (
+        <div className="w-full flex flex-col items-center justify-center animate-fadeIn">
+          {/* Navbar Component */}
+          <Navbar />
+
+          {/* Hero Section Component */}
+          <Hero showLogo={showLogo} />
+
+          {/* Main Content Section Component */}
+          <ContentSection />
+
+          {/* Footer Component */}
+          <Footer />
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Video Player Component
+const VideoPlayer = ({ src, onVideoEnd }) => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      // Attempt to play the video. Browsers might still block autoplay with sound.
+      // playsInline is crucial for iOS to play video within the page.
+      videoRef.current.play().catch(error => {
+        console.error("Video autoplay failed:", error);
+        // Fallback: If autoplay fails, hide video and show content immediately
+        onVideoEnd();
+      });
+    }
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center w-full h-screen bg-black p-4"> {/* Added padding */}
+      <video
+        ref={videoRef}
+        src={src}
+        onEnded={onVideoEnd}
+        autoPlay
+        muted={false} // Attempt to play with sound
+        loop={false}
+        playsInline // Important for mobile browsers (especially iOS)
+        className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+        style={{ width: 'auto', height: 'auto', maxWidth: '90vw', maxHeight: '90vh' }}
+      >
+        Your browser does not support the video tag.
+      </video>
+      {/* Skip Video Link */}
+      <button
+        onClick={onVideoEnd}
+        className="mt-4 text-gray-400 hover:text-red-400 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-1"
+      >
+        Skip Video
+      </button>
+    </div>
+  );
+};
+
+// Navbar Component
+const Navbar = () => {
+  return (
+    <nav className="shadow-xl py-4 px-6 md:px-12 w-full" style={{ backgroundColor: '#333333' }}>
+      <div className="container mx-auto flex justify-between items-center">
+        {/* Logo or Site Title */}
+        <a href="#" className="text-2xl font-bold text-red-400 rounded-md p-2 hover:bg-gray-800 transition-colors">
+          Transversal Punto Zero
+        </a>
+
+        {/* Navigation Links */}
+        <div className="flex space-x-8">
+          <NavLink text="Chi Siamo" href="chisiamo.html" />
+          <NavLink text="Podcasts" href="podcasts.html" />
+          <NavLink text="Links" href="links.html" />
+          {/* New "Contattaci" link */}
+          <NavLink text="Contattaci" href="mailto:transversalpuntozero@gmail.com" />
+        </div>
+
+        {/* Mobile menu button (hidden for this simplified version, but kept for future expansion) */}
+        <button
+          className="md:hidden text-gray-400 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-2 transition-colors"
+          aria-label="Toggle navigation"
+          style={{ display: 'none' }} // Hidden for now as mobile menu logic is not implemented
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  );
+};
+
+// Reusable Navigation Link component
+const NavLink = ({ href, text }) => (
+  <a
+    href={href}
+    className="text-gray-300 hover:text-red-400 font-medium transition-colors rounded-md p-2 hover:bg-gray-800"
+  >
+    {text}
+  </a>
+);
+
+// Hero Section Component
+const Hero = ({ showLogo }) => {
+  return (
+    <section className="bg-black text-white py-20 md:py-28 lg:py-36 shadow-lg w-full">
+      <div className="container mx-auto px-6 md:px-12 text-center">
+        {showLogo ? (
+          <div className="flex flex-col items-center justify-center">
+            {/* Actual Logo Image */}
+            <img
+              src="https://github.com/fabriziosalmi/transversal/blob/main/transversalpuntozero_logo.png?raw=true"
+              alt="Transversal Punto Zero Logo"
+              className="max-w-xs md:max-w-sm lg:max-w-md h-auto mb-4"
+            />
+          </div>
+        ) : (
+          <>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 drop-shadow-md">
+              Innovating for a Brighter Future
+            </h1>
+            <p className="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto opacity-90">
+              Transversal Punto Zero is dedicated to pioneering solutions that drive progress and create lasting impact.
+            </p>
+            <button className="bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-red-700 hover:scale-105 transition-all duration-300 ease-in-out transform">
+              Learn More About Us
+            </button>
+          </>
+        )}
+      </div>
+    </section>
+  );
+};
+
+// Main Content Section Component
+const ContentSection = () => {
+  return (
+    <section className="py-16 md:py-24 bg-black w-full">
+      <div className="container mx-auto px-6 md:px-12">
+        {/* Removed the <h2> tag for "Explore" */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {/* Feature Card 1: Chi Siamo */}
+          <FeatureCard
+            icon="👥" // People icon
+            title="CHI SIAMO"
+            description="Scopri la nostra missione, visione e il team appassionato dietro Transversal Punto Zero."
+            href="chisiamo.html"
+          />
+
+          {/* Feature Card 2: Podcasts */}
+          <FeatureCard
+            icon="🎙️" // Microphone/podcast icon
+            title="PODCASTS"
+            description="Sintonizzati sulle nostre ultime discussioni, interviste e approfondimenti su vari argomenti."
+            href="podcasts.html"
+          />
+
+          {/* Feature Card 3: Links */}
+          <FeatureCard
+            icon="🔗" // Link icon
+            title="LINK"
+            description="Trova risorse utili, partner e altri collegamenti pertinenti."
+            href="links.html"
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Reusable Feature Card component
+const FeatureCard = ({ icon, title, description, href }) => (
+  <a href={href} className="block bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-gray-100">
+    <div className="text-5xl mb-6 text-center">{icon}</div>
+    <h3 className="text-xl font-semibold text-gray-100 mb-4 text-center">{title}</h3>
+    <p className="text-gray-300 leading-relaxed text-center">{description}</p>
+  </a>
+);
+
+// Footer Component
+const Footer = () => {
+  return (
+    <footer className="bg-gray-950 text-white py-10 w-full">
+      <div className="container mx-auto px-6 md:px-12 text-center">
+        {/* Removed footer links and copyright text */}
+      </div>
+    </footer>
+  );
+};
+
+// Reusable Footer Link component (no longer used but kept for completeness if needed elsewhere)
+const FooterLink = ({ href, text }) => (
+  <a
+    href={href}
+    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm rounded-md p-1"
+  >
+    {text}
+  </a>
+);
+
+export default App;
